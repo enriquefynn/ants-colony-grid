@@ -4,26 +4,18 @@
 #include <map>
 #include <set>
 #include <iostream>
+#include <node.hpp>
 
 #define nOfLines 75882909
 #define NGrid 20
 #define MAXMETRES 40000
 
-using namespace std;
 
-class node
-{
-	double x;
-	double y;
-	char direction;
-	public:
-	inline node(double x, double y) { this->x = x; this->y = y;}
-	inline friend bool operator== (const node& lhs, const node& rhs){return ((lhs.direction == rhs.direction) && (lhs.x == rhs.x) && (lhs.y == rhs.y));}
-	inline friend bool operator< (const node& lhs, const node& rhs){ return (lhs.x == rhs.x) ? (lhs.y < rhs.y): (lhs.x < rhs.x);}
-};
+using namespace std;
 
 int main(int argc, char* argv[])
 {
+	unordered_set<node<int> > nodes;
 	double NGridDiv = MAXMETRES/NGrid;
 
 	int grid[NGrid][NGrid];
@@ -31,9 +23,10 @@ int main(int argc, char* argv[])
 
 	ifstream file(argv[1]);
 	string sec, line, carID, vel, aux;
-	set<pair<node*, int times> > keep;
+	vector<pair<node<int>*, int times> > keep;
 	double x, y;
 	//int i = 0;
+	node<int> auxNode = new node<int>(0, 0, 'I');
 	while(getline(file, line)) 
 	{
 		stringstream ss(line);
@@ -46,9 +39,17 @@ int main(int argc, char* argv[])
 		yi = stod(aux)/NGridDiv;
 
 		ss >> vel;
+		auxNode.setX(xi);
+		auxNode.setY(yi);
 		//cout << i++ << endl;
-		auto v = routes[carID];
-		if (!v.empty())
+		auto no = nodes.find(auxNode);
+		if (no == NULL)
+			nodes.insert(auxNode);
+		if (keep.size() > 1)
+			no.setDirection(keep.back().getDirection(node));
+		
+		keep.insert(make_pair(no,
+		if (!v.first.empty())
 		{
 			if 
 			if ((v[v.size()-1].first) != xi || (v[v.size()-1].second != yi))
