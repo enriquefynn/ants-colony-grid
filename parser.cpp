@@ -26,7 +26,8 @@ int main(int argc, char* argv[])
 	vector<pair<node<int>*, int times> > keep;
 	double x, y;
 	//int i = 0;
-	node<int> auxNode = new node<int>(0, 0, 'I');
+	node<int> auxNode = new node<int>(0, 0, 'E');
+	int ntimes = 0;
 	while(getline(file, line)) 
 	{
 		stringstream ss(line);
@@ -41,12 +42,23 @@ int main(int argc, char* argv[])
 		ss >> vel;
 		auxNode.setX(xi);
 		auxNode.setY(yi);
+		auxNode.setDirection('E');
 		//cout << i++ << endl;
 		auto no = nodes.find(auxNode);
 		if (no == NULL)
 			nodes.insert(auxNode);
 		if (keep.size() > 1)
-			no.setDirection(keep.back().getDirection(node));
+		{
+			if (no == keep.back())
+				++ntimes;
+			else
+			{
+				no.setDirection(keep.back().getDirection(node));
+				ntimes = 0;
+			}
+		}
+		if (no == keep.back())
+		
 		
 		keep.insert(make_pair(no,
 		if (!v.first.empty())
