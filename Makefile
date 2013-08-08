@@ -1,7 +1,7 @@
-CC=g++-4.7
+CC=g++-4.6
 CCFLAGS=-O3 -std=c++0x
 
-all:
+all: parser.o node.o
 	$(CC) $(CCFLAGS) node.o parser.o -o main
 parser.o: parser.cpp
 	$(CC) $(CCFLAGS) -c parser.cpp

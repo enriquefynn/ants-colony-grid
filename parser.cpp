@@ -3,8 +3,9 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <unordered_set>
 #include <iostream>
-#include <node.hpp>
+#include "node.hpp"
 
 #define nOfLines 75882909
 #define NGrid 20
@@ -15,7 +16,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	unordered_set<node<int> > nodes;
+	map<node<int>, int > nodes;
 	double NGridDiv = MAXMETRES/NGrid;
 
 	int grid[NGrid][NGrid];
@@ -23,10 +24,9 @@ int main(int argc, char* argv[])
 
 	ifstream file(argv[1]);
 	string sec, line, carID, vel, aux;
-	vector<pair<node<int>*, int times> > keep;
+	vector<node<int> *> trip;
 	double x, y;
-	//int i = 0;
-	node<int> auxNode = new node<int>(0, 0, 'E');
+	node<int> *auxNode = new node<int>(0, 0, 'E');
 	int ntimes = 0;
 	while(getline(file, line)) 
 	{
@@ -40,9 +40,9 @@ int main(int argc, char* argv[])
 		yi = stod(aux)/NGridDiv;
 
 		ss >> vel;
-		auxNode.setX(xi);
-		auxNode.setY(yi);
-		auxNode.setDirection('E');
+		auxNode->setX(xi);
+		auxNode->setY(yi);
+		auxNode->setDirection('E');
 		//cout << i++ << endl;
 		auto no = nodes.find(auxNode);
 		if (no == NULL)

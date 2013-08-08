@@ -14,9 +14,9 @@ using namespace std;
 template <typename T>
 class node
 {
-	T x;
-	T y;
-	char direction;
+	T x;						/* X coord */
+	T y;						/* Y coord */
+	char direction;	/* Heading direction */
 	public:
 	inline node(double x, double y, char direction) { this->x = x; this->y = y; this->direction = direction;}
 	inline friend bool operator== (const node& lhs, const node& rhs){return ((lhs.direction == rhs.direction) && (lhs.x == rhs.x) && (lhs.y == rhs.y));}
