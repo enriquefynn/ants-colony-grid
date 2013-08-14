@@ -1,23 +1,32 @@
 #include "node.hpp"
+#include "graph.hpp"
 
-unordered_set<node<int> > fixed_nodes;
-class graph
+template <typename T>
+void Graph<T>::insert(T x, T y, char dir)
 {
-	vector<pair<node<int>*, int times> > path;
-	node<int> *aux = new node<int>(0, 0, 'E');
-	int repeat = 0;
+	Node<T> node;
+	node.setX(x);
+	node.setY(y);
+	node.setDirection(dir);
 	
-	void insert(int x, int y)
-	{
-		aux.setX(x);
-		aux.setY(y);
-		auto tryNode = nodes.find(auxNode);
-		if (tryNode == NULL)
-			fixed_nodes.insert(aux);
-		if (path.size() > 1)
+	if (node == root)
+		whereTo = &root;
+	else
+	{	
+		if (!fixedNodes.count(node))
 		{
-			if (aux == path.back())
-				path.
+			fixedNodes[node] = 0;
+			graph[node] = vector<Node<T> *>();
+		}
+		vector<Node<T> *> v = graph[node];
+		if ((v.size() > 0) && (node == &whereTo))
+			++fixedNodes[&whereTo];
+		else
+		{
+			Node<T> *nodePtr = &fixedNodes.find(node);
+			graph[&whereTo].push_back(nodePtr);
+			whereTo = nodePtr;
 		}
 	}
 }
+

@@ -3,7 +3,7 @@
 
 using namespace std;
 template <typename T>
-char node<T>::getDirection(node *n)
+char Node<T>::getDirection(Node *n)
 {
 	int angle = atan2(this->y - n->y, this->x - n->x) * 180. / M_PI;
 	if ((angle >= 315) && (angle < 45))
