@@ -21,8 +21,5 @@ def parse(filename, gridMax, n):
 		y = float(data[2])/gridDiv
 		print "{0} {1} {2}".format(ids[data[0]], int(x), int(y)) 
 
-
-
-
 if __name__ == "__main__":
 	main()

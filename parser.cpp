@@ -6,7 +6,6 @@
 #include <iostream>
 #include <string>
 #include "graph.hpp"
-#include "graph.cpp"
 #define nOfLines 75882909
 #define NGrid 20
 #define MAXMETRES 40000
@@ -16,43 +15,28 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	double NGridDiv = MAXMETRES/NGrid;
-
-	int grid[NGrid][NGrid];
-	int xi, yi;
-
-	ifstream file(argv[1]);
-	string sec, line, carID, vel, aux;
-	double x, y;
-	
-	//First time is the root node;
-	getline(file, line);
-	stringstream ss(line);
-	ss >> sec >> carID;
-
-	ss >> aux;
-	xi = stod(aux)/NGridDiv;
-	
-	ss >> aux;
-	yi = stod(aux)/NGridDiv;
-
-	ss >> vel;
-	
-	Graph<int> *g = new Graph<int>(xi, yi);
-	
-	while(getline(file, line)) 
+	int id, x, y;
+	Graph *g = new Graph(9, 4);
+	int oldId = 0;
+	int line = 0;
+	while(cin >> id >> x >> y)
 	{
-		ss >> sec >> carID;
-
-		ss >> aux;
-		xi = stod(aux)/NGridDiv;
-		
-		ss >> aux;
-		yi = stod(aux)/NGridDiv;
-
-		ss >> vel;
-		g->insert(xi, yi, 'E');
+		++line;
+		if (id == oldId)
+			g->insert(x, y, 'E', SAMETRIP);
+		else
+		{
+			g->insert(x, y, 'E', NEWTRIP);
+			if (oldId+1 != id)
+			{
+				cout << "FILE MUST BE ORDERED at line: " << line << endl;
+				cout << oldId << ' ' << id << endl;
+				return 3;
+			}
+			oldId = id;
+		}
 	}
+	g->print();
 	return 1;
 }
 

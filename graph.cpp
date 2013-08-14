@@ -1,32 +1,45 @@
-#include "node.hpp"
+#include <iostream>
 #include "graph.hpp"
 
-template <typename T>
-void Graph<T>::insert(T x, T y, char dir)
+using namespace std;
+
+Graph::Graph(int x, int y)
 {
-	Node<T> node;
+}
+
+/** Inserts a node in the graph
+ * \param x X coordinate
+ * \param y Y coordinate
+ * \param flags The flags for inserting
+*/
+void Graph::insert(int x, int y, char direction, int flags)
+{
+	Node<int> node;
 	node.setX(x);
 	node.setY(y);
-	node.setDirection(dir);
-	
-	if (node == root)
-		whereTo = &root;
+	Node<int> *nodePtr;
+	if (!fixedNodes.count(node))
+	{
+		fixedNodes[node] = 0;
+		nodePtr = (Node<int> *) &(fixedNodes.find(node)->first);
+		graph[nodePtr] = vector<Node<int> *>();
+	}
 	else
-	{	
-		if (!fixedNodes.count(node))
-		{
-			fixedNodes[node] = 0;
-			graph[node] = vector<Node<T> *>();
-		}
-		vector<Node<T> *> v = graph[node];
-		if ((v.size() > 0) && (node == &whereTo))
-			++fixedNodes[&whereTo];
-		else
-		{
-			Node<T> *nodePtr = &fixedNodes.find(node);
-			graph[&whereTo].push_back(nodePtr);
+		nodePtr = (Node<int> *) &(fixedNodes.find(node)->first);
+	//If node is repeated
+	if ((!graph[nodePtr].empty()) && (*graph[nodePtr].back() == node))
+		++fixedNodes[node];
+	else
+	{
+		if ((!whereTo) || (flags & NEWTRIP))
 			whereTo = nodePtr;
-		}
+		graph[whereTo].push_back(nodePtr);
+		whereTo = graph[whereTo].back();
 	}
 }
 
+void Graph::print()
+{
+	for (auto node : fixedNodes)
+		cout << node.first << ' ' << node.second << endl;
+}
