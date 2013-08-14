@@ -1,4 +1,4 @@
-CC=g++-4.6
+CC=gcc
 CCFLAGS=-O3 -std=c++0x
 
 all: parser.o node.o graph.o
