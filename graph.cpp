@@ -23,12 +23,12 @@ void Graph::insert(int x, int y, char direction, int flags)
 	{
 		fixedNodes[node] = 1;
 		nodePtr = (Node<int> *) &(fixedNodes.find(node)->first);
-		graph[nodePtr] = vector<Node<int> *>();
+		graph[nodePtr] = unordered_set<Node<int> *>();
 	}
 	else
 		nodePtr = (Node<int> *) &(fixedNodes.find(node)->first);
 	//If node is repeated
-	if ((whereTo) && (!graph[whereTo].empty()) && (*graph[whereTo].back() == node))
+	if ((whereTo) && (graph[whereTo].count(nodePtr)))
 		++fixedNodes[node];
 	else
 	{
@@ -37,8 +37,8 @@ void Graph::insert(int x, int y, char direction, int flags)
 		//Add if node is not itself
 		if (*whereTo != node)
 		{
-			graph[whereTo].push_back(nodePtr);
-			whereTo = graph[whereTo].back();
+			graph[whereTo].insert(nodePtr);
+			whereTo = nodePtr;
 		}
 	}
 }

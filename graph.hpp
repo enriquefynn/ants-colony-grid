@@ -1,5 +1,5 @@
 #include <map>
-#include <vector>
+#include <unordered_set>
 #include "node.cpp"
 #define SAMETRIP 0
 #define NEWTRIP 1
@@ -11,7 +11,7 @@ class Graph
 	int x;
 	int y;
 	map<Node<int>, int> fixedNodes;
-	map<Node<int> *, vector<Node<int> *> > graph;
+	map<Node<int> *, unordered_set<Node<int> *> > graph;
 	Node<int> *whereTo;
 public:
 	inline Graph(){}
