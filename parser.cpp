@@ -13,12 +13,19 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	char opt;
-	while ((opt = getopt(argc, argv, "f")) != -1) 
+	int testLine;
+	bool testFlag = false;
+	while ((opt = getopt(argc, argv, "t:h")) != -1) 
 	{
 		switch(opt)
 		{
-			case 'p':
+			case 't':
+				testLine = stoi(optarg);
 				break;
+			case 'h':
+			default:
+				puts("Receives the input from stdin\nOptions:\n\t-t <line>: Begin to test from <line> inclusive till EOF");
+				exit(1);
 		}
 	}
 	
@@ -30,6 +37,8 @@ int main(int argc, char* argv[])
 	while(cin >> id >> x >> y)
 	{
 		++line;
+		if (testFlag && (line == testLine))
+			break;
 		if (id == oldId)
 			g->insert(x, y, 'E', SAMETRIP);
 		else
@@ -38,13 +47,18 @@ int main(int argc, char* argv[])
 			g->insert(x, y, 'E', NEWTRIP);
 			if (oldId+1 != id)
 			{
-				cout << "FILE MUST BE ORDERED at line: " << line << endl;
-				cout << oldId << ' ' << id << endl;
+				cerr << "FILE MUST BE ORDERED at line: " << line << '\n'
+				<< oldId << ' ' << id << endl;
 				return 3;
 			}
 			oldId = id;
 		}
 	}
+	if (testFlag)
+		while(cin >> id >> x >> y)
+		{
+			
+		}
 	g->print(trips);
 	return 1;
 }
