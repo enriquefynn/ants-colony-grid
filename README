@@ -17,9 +17,9 @@ file must be ORDERED by ID
 ------ Scripts -------
 ----------------------
 the graph.py generates and handles the graph
-file must be in format:
+file must be in format (INCLUDING DOUBLE QUOTES)
 
-NodeId (OtherNodeId, Weight) (OtherNode...
+NodeId ("OtherNodeId", "Weight") ("OtherNode...
 
 
 
