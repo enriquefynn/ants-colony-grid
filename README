@@ -9,8 +9,7 @@ use it like:
 The file must be in this format:
 ID X Y
 
-file must be ORDERED by ID
-
+file must be ORDERED by ID and Timestamp
 
 
 ----------------------
