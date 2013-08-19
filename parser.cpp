@@ -1,8 +1,5 @@
 #include <fstream>
 #include <sstream>
-#include <vector>
-#include <map>
-#include <set>
 #include <iostream>
 #include <string>
 #include "graph.hpp"
@@ -10,15 +7,26 @@
 #define NGrid 20
 #define MAXMETRES 40000
 
-
 using namespace std;
+
 
 int main(int argc, char* argv[])
 {
+	char opt;
+	while ((opt = getopt(argc, argv, "f")) != -1) 
+	{
+		switch(opt)
+		{
+			case 'p':
+				break;
+		}
+	}
+	
 	int id, x, y;
-	Graph *g = new Graph(9, 4);
+	Graph *g = new Graph();
 	int oldId = 0;
 	int line = 0;
+	int trips = 0;
 	while(cin >> id >> x >> y)
 	{
 		++line;
@@ -26,6 +34,7 @@ int main(int argc, char* argv[])
 			g->insert(x, y, 'E', SAMETRIP);
 		else
 		{
+			++trips;
 			g->insert(x, y, 'E', NEWTRIP);
 			if (oldId+1 != id)
 			{
@@ -36,7 +45,7 @@ int main(int argc, char* argv[])
 			oldId = id;
 		}
 	}
-	g->print();
+	g->print(trips);
 	return 1;
 }
 
