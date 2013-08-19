@@ -13,8 +13,9 @@ class Node
 	inline Node(T x, T y, char direction) { this->x = x; this->y = y; this->direction = direction;}
 	inline Node() {}
 	inline friend bool operator== (const Node<T> &lhs, const Node<T> &rhs){return ((lhs.direction == rhs.direction) && (lhs.x == rhs.x) && (lhs.y == rhs.y));}
+	inline friend bool operator!= (const Node<T> &lhs, const Node<T> &rhs) {return !(lhs == rhs);}
 	inline friend bool operator< (const Node<T> &lhs, const Node<T> &rhs){ return (lhs.x == rhs.x) ? (lhs.y < rhs.y): (lhs.x < rhs.x);}
-	inline friend ostream& operator<< (ostream &out, const Node<T> &node) {out << '(' << node.x << ',' << node.y << ')'; return out;}
+	inline friend ostream& operator<< (ostream &out, const Node<T> &node) {out << node.x << '-' << node.y; return out;}
 	
 	inline void setX(T x) {this->x = x;}
 	inline T getX() {return this->x;}
