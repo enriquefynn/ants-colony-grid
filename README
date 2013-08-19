@@ -1,0 +1,33 @@
+
+----------------------
+----- Main Usage -----
+----------------------
+use it like:
+./man < file
+
+
+The file must be in this format:
+ID X Y
+
+file must be ORDERED by ID
+
+
+
+----------------------
+------ Scripts -------
+----------------------
+the graph.py generates and handles the graph
+file must be in format:
+
+NodeId (OtherNodeId, Weight) (OtherNode...
+
+
+
+
+
+
+
+
+
+
+
