@@ -4,7 +4,6 @@
 #define SAMETRIP 0
 #define NEWTRIP 1
 
-
 using namespace std;
 
 class Graph
@@ -18,5 +17,5 @@ public:
 	inline Graph(){}
 	Graph(int x, int y);
 	void insert(int x, int y, char direction, int flags);
-	void print();
+	void print(int trips);
 };
