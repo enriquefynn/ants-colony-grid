@@ -32,15 +32,15 @@ void Graph::insert(int x, int y, char direction, int flags)
 		++fixedNodes[node];
 	else
 	{
+		//If there is no pointer to where insert or is a new trip just update whereTo
 		if ((!whereTo) || (flags & NEWTRIP))
-			whereTo = nodePtr;
+			goto end;
 		//Add if node is not itself
 		if (*whereTo != node)
-		{
 			graph[whereTo].insert(nodePtr);
-			whereTo = nodePtr;
-		}
 	}
+end:
+	whereTo = nodePtr;
 }
 
 void Graph::print(int trips)
