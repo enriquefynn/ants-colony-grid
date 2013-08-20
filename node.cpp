@@ -8,6 +8,7 @@ class Node
 {
 	T x;						/* X coord */
 	T y;						/* Y coord */
+	double avgWait;	/* Average waiting time */
 	char direction;	/* Heading direction */
 	public:
 	inline Node(T x, T y, char direction) { this->x = x; this->y = y; this->direction = direction;}
@@ -17,11 +18,11 @@ class Node
 	inline friend bool operator< (const Node<T> &lhs, const Node<T> &rhs){ return (lhs.x == rhs.x) ? (lhs.y < rhs.y): (lhs.x < rhs.x);}
 	inline friend ostream& operator<< (ostream &out, const Node<T> &node) {out << node.x << '-' << node.y; return out;}
 	
+	inline double getAvgWait() {return avgWait;}
+	inline void setAvgWait(double w) {avgWait = w;}
+	
 	inline void setX(T x) {this->x = x;}
-	inline T getX() {return this->x;}
 	inline void setY(T y) {this->y = y;}
-	inline T getY() {return this->y;}
-	inline void setDirection(char d){this->direction = d;}
 	inline char getDirection(Node *n)
 	{
 		int angle = atan2(this->y - n->y, this->x - n->x) * 180. / M_PI;

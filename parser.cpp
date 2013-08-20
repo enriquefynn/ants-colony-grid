@@ -33,18 +33,18 @@ int main(int argc, char* argv[])
 	Graph *g = new Graph();
 	int oldId = 0;
 	int line = 0;
-	int trips = 0;
+	int trips = 1;
 	while(cin >> id >> x >> y)
 	{
 		++line;
 		if (testFlag && (line == testLine))
 			break;
 		if (id == oldId)
-			g->insert(x, y, 'E', SAMETRIP);
+			g->insert(x, y, 'E', trips, SAMETRIP);
 		else
 		{
 			++trips;
-			g->insert(x, y, 'E', NEWTRIP);
+			g->insert(x, y, 'E', trips, NEWTRIP);
 			if (oldId+1 != id)
 			{
 				cerr << "FILE MUST BE ORDERED at line: " << line << '\n'
