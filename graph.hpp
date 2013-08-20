@@ -8,10 +8,8 @@ using namespace std;
 
 class Graph
 {
-	int x;
-	int y;
-	map<Node<int>, int> fixedNodes;
-	map<Node<int> *, unordered_set<Node<int> *> > graph;
+	map<Node<int>, int> fixedNodes;	/*Fixed nodes:avg waiting*/
+	map<Node<int> *, unordered_set<Node<int> *> > graph;	/*The Graph*/
 	Node<int> *whereTo;
 public:
 	inline Graph(){}
