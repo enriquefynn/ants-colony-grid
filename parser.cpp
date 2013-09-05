@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iostream>
 #include <string>
+#include <unistd.h>
 #include "graph.hpp"
 #define nOfLines 75882909
 #define NGrid 20
@@ -60,7 +61,7 @@ int main(int argc, char* argv[])
 			
 		}
 	g->print(trips);
-	return 1;
+	return 0;
 }
 
 

@@ -1,16 +1,27 @@
 #include <map>
 #include <unordered_set>
+#include <unordered_map>
 #include "node.cpp"
 #define SAMETRIP 0
 #define NEWTRIP 1
 
 using namespace std;
 
+struct Anode
+{
+	Node<int> *node;
+	unordered_set<const Anode *> conn;
+	Anode(int x, int y, char d)
+	{
+		node = new Node<int>(x, y, d);
+	}
+	Anode() {}
+};
+
 class Graph
 {
-	map<Node<int>, int> fixedNodes;	/*Fixed nodes:local waiting*/
-	map<Node<int> *, unordered_set<Node<int> *> > graph;	/*The Graph*/
-	Node<int> *whereTo;
+	unordered_map<string, Anode > graph;	/*The Graph*/
+	string whereAmI;
 public:
 	inline Graph(){}
 	Graph(int x, int y);

@@ -1,10 +1,19 @@
 #include <iostream>
+#include <sstream>
 #include "graph.hpp"
 
 using namespace std;
 
 Graph::Graph(int x, int y)
 {
+}
+
+string toStringFormat(int x, int y)
+{
+	string s;
+	stringstream out;
+	out << x << '-' << y;
+	return out.str();
 }
 
 /** Inserts a node in the graph
@@ -15,62 +24,53 @@ Graph::Graph(int x, int y)
 */
 void Graph::insert(int x, int y, char direction, int tripN, int flags)
 {
-	Node<int> node;
-	node.setX(x);
-	node.setY(y);
-	Node<int> *nodePtr;	/*Pointer to node in fixedNodes*/
-	//If there is no node in fixed yet
-	if (!fixedNodes.count(node))
+	string nodeStr = toStringFormat(x, y);
+	//There isn't a key yet
+	if (!graph.count(nodeStr))
 	{
-		node.setAvgWait(1.);
-		fixedNodes[node] = 1;
-		nodePtr = (Node<int> *) &(fixedNodes.find(node)->first);
-		graph[nodePtr] = unordered_set<Node<int> *>();
+		Anode a = Anode(x, y, direction);
+		graph[nodeStr] = a;
+		if (whereAmI != "")
+		{
+			graph[whereAmI].conn.insert(&graph[nodeStr]);
+			(graph[whereAmI].node)->leave();
+		}
+		whereAmI = nodeStr;
 	}
-	else
-		nodePtr = (Node<int> *) &(fixedNodes.find(node)->first);
-	//If node is repeated
-	if ((whereTo) && graph[whereTo].count(nodePtr))
-	{
-		++fixedNodes[node];
-		cout << "F: " << fixedNodes[node] << endl;
-	}
+	//There is a node with this key
 	else
 	{
-		//If for some reason has no where to go, end
-		if (!whereTo)
-			goto end;
-		//If it is a new trip update average time
+		//Is this a new trip?
 		if (flags & NEWTRIP)
 		{
-			((*fixedNodes.find(node)).first).setAvgWait((node.getAvgWait() + fixedNodes[node])/tripN);
-			fixedNodes[node] = 1;
-			goto end;
+			(graph[whereAmI].node)->leave();
+			whereAmI = nodeStr;
 		}
-		//Add if node is not itself
-		if (*whereTo != node)
-			graph[whereTo].insert(nodePtr);
 		else
 		{
-			++fixedNodes[node];
-			cout << "F: " << fixedNodes[node] << endl;
+			//Are we waiting in the same node?
+			if (whereAmI == nodeStr)
+				(graph[nodeStr].node)->wait();
+			else
+			{
+				(graph[whereAmI].node)->leave();
+				graph[whereAmI].conn.insert(&graph[nodeStr]);
+				whereAmI = nodeStr;
+				(graph[whereAmI].node)->enter();
+			}
 		}
 	}
-end:
-	whereTo = nodePtr;
-	cout << "WHERE: " << *whereTo << endl;
 }
 
 void Graph::print(int trips)
 {
-	for (auto node : graph)
+	for (auto sa : graph)
 	{
-		cout << *node.first << ' ';
-		for (auto child : node.second)
-			cout << '(' << '"' << *child << '"' << ',' << '"' << 
-			child->getAvgWait() << "\") ";
+		cout << sa.first << '(';
+		cout << (graph[sa.first].node)->getAvgWait() << "): ";
+		for (auto anode : sa.second.conn)
+			cout << *(anode->node) << ' ';
 		cout << endl;
-		//out << g.fixedNodes[*(node.first)];
 	}
 }
 
