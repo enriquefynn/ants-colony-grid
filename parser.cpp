@@ -10,6 +10,13 @@
 
 using namespace std;
 
+string toFormat(int x, int y)
+{
+  string s;
+  stringstream out;
+  out << x << '-' << y;
+  return out.str();
+}
 
 int main(int argc, char* argv[])
 {
@@ -54,6 +61,8 @@ int main(int argc, char* argv[])
 			}
 			oldId = id;
 		}
+		pair<double, string> p = g->predictNext(toFormat(x, y), 1, 0);
+		cout << p.first << "," << p.second << endl;
 	}
 	if (testFlag)
 		while(cin >> id >> x >> y)

@@ -1,5 +1,7 @@
 #include <iostream>
 #include <sstream>
+#include <vector>
+#include <algorithm>
 #include "graph.hpp"
 
 using namespace std;
@@ -60,6 +62,69 @@ void Graph::insert(int x, int y, char direction, int tripN, int flags)
 			}
 		}
 	}
+}
+
+/** Predict where to be
+ * \param node Node
+ * \param maxT Maximum forecast time
+ * \param localT Local time (for recursion)
+*/
+pair<double, string> Graph::predictNext(string node, double maxT, double localT)
+{
+	if (graph[node].empty())
+		return make_pair(1, node);
+	if ((graph[node].node)->getAvgWait() + localT > maxT)
+		return make_pair(0, node);
+	double nTimes = 0;
+	for (auto child : graph[node].conn)
+		nTimes+= child->node->timesPassed;
+	vector<pair<double, string > > l;
+	for (auto child : graph[node].conn)
+	{
+		l.push_back(predictNext(child->node->getID(), 
+								maxT, localT + child->node->getAvgWait()));
+		l.back().first*=(child->node->timesPassed)/nTimes;
+	}
+	sort(l.begin(), l.end());
+	return l[0];
+}
+
+void Graph::dfs(unordered_map<string, bool> &visited, vector<Node<int >* > &nodes, string node, double maxT, double localT)
+{
+	if (visited[node] == true)
+		return;
+	visited[node] = true;
+	if ((graph[node].node)->getAvgWait() + localT > maxT)
+	{
+		nodes.push_back(graph[node].node);
+		return;
+	}
+	for (auto child : graph[node].conn)
+		dfs(visited, nodes, child->node->getID(), maxT, localT + child->node->getAvgWait());
+}
+
+pair<double, string> Graph::predictNext(int x, int y, double timeSpentHere, double maxT)
+{
+	string xy = toStringFormat(x, y);
+	vector<Node<int>* > probNodes;
+	unordered_map<string, bool> visited = unordered_map<string, bool>();
+	dfs(visited, probNodes, xy, maxT, 0);
+	int i = 0;
+	int best = 0;
+	double bestT = 0;
+	double all = 0;
+	for (auto node : probNodes)
+	{
+		int timeP = node->timesPassed;
+		all+= timeP;
+		if (timeP > bestT)
+		{
+			bestT = timeP;
+			best = i;
+		}
+		++i;
+	}
+	return make_pair(probNodes[best]->timesPassed/all, probNodes[best]->getID());
 }
 
 void Graph::print(int trips)
