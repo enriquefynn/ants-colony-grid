@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 				exit(1);
 		}
 	}
-	
+	double xd, yd;
 	int id, x, y;
 	Graph *g = new Graph();
 	int oldId = 0;
@@ -56,12 +56,28 @@ int main(int argc, char* argv[])
 	int trips = 1;
 	string nodePredicted = "-1--1";
 	double probability = 0;
-	while(cin >> id >> x >> y)
-	{
-		if (nodePredicted == toFormat(x, y))
-			cout << probability << endl;
-		else
-			cout << 0 << endl;
+	string b;
+	int time, oldTime = 0;
+	getline(cin, b);
+	vector<pair<double, string> > *p;
+	while(cin >> xd >> yd >> b >> id >> time) {
+		x = xd*1000;
+		y = yd*1000;
+		if (time - oldTime < 80)
+		{
+			for (auto pprob : *p)
+			{
+				if (pprob.second == toFormat(x, y))
+				{
+					nodePredicted = pprob.second;
+					probability = pprob.first;
+				}
+			}
+			if (nodePredicted != "-1--1")
+				cout << probability << endl;
+			else
+				cout << 0 << endl;
+		}
 		++line;
 		if (testFlag && (line == testLine))
 			break;
@@ -79,10 +95,9 @@ int main(int argc, char* argv[])
 			}
 			oldId = id;
 		}
-		pair<double, string> p = g->predictNext(x, y, 0, 1);
-		nodePredicted = p.second;
-		probability = p.first;
+		p = g->predictNext(x, y, 0, 1);
 		//cout << "At " << toFormat(x, y) << " probability " << probability << " to " << nodePredicted << endl;
+		oldTime = time;
 	}
 	if (testFlag)
 		while(cin >> id >> x >> y)

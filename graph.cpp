@@ -119,30 +119,19 @@ void Graph::dfs(unordered_map<string, bool> &visited, vector<Node<int >* > &node
 	}
 }
 
-pair<double, string> Graph::predictNext(int x, int y, double timeSpentHere, double maxT)
+vector<pair<double, string> > *Graph::predictNext(int x, int y, double timeSpentHere, double maxT)
 {
 	string xy = toStringFormat(x, y);
 	vector<Node<int>* > probNodes = vector<Node<int>* >();
 	unordered_map<string, bool> visited = unordered_map<string, bool>();
 	dfs(visited, probNodes, xy, maxT, 0);
-	int i = 0;
-	int best = 0;
-	double bestT = 0;
+	vector<pair<double, string> > *probPairs = new vector<pair<double, string> >();
 	double all = 0;
 	for (auto node : probNodes)
-	{
-		int timeP = node->timesPassed;
-		all+= timeP;
-		if (timeP > bestT)
-		{
-			bestT = timeP;
-			best = i;
-		}
-		++i;
-	}
-	if (!all)
-		return make_pair(0, "-1--1");
-	return make_pair(probNodes[best]->timesPassed/all, probNodes[best]->getID());
+		all+= node->timesPassed;
+	for (auto node : probNodes)
+		probPairs->push_back(make_pair(node->timesPassed/all, node->getID()));
+	return probPairs;
 }
 
 void Graph::print(int trips)

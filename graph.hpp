@@ -41,7 +41,7 @@ public:
 	Graph(int x, int y);
 	void insert(int x, int y, char direction, int tripN, int flags);
 	void print(int trips);
-	pair<double, string> predictNext(int x, int y, double timeSpentHere, double maxT);
+	vector<pair<double, string> > *predictNext(int x, int y, double timeSpentHere, double maxT);
 	void dfs(unordered_map<string, bool> &visited, vector<Node<int >* > &nodes, string node, double maxT, double localT);
 	pair<double, string> predictNext(string node, double maxT, double localT);
 };
