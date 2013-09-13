@@ -42,8 +42,14 @@ int main(int argc, char* argv[])
 	int oldId = 0;
 	int line = 0;
 	int trips = 1;
+	string nodePredicted = "-1--1";
+	double probability = 0;
 	while(cin >> id >> x >> y)
 	{
+		if (nodePredicted == toFormat(x, y))
+			cout << probability << endl;
+		else
+			cout << 0 << endl;
 		++line;
 		if (testFlag && (line == testLine))
 			break;
@@ -61,8 +67,10 @@ int main(int argc, char* argv[])
 			}
 			oldId = id;
 		}
-		pair<double, string> p = g->predictNext(toFormat(x, y), 1, 0);
-		cout << p.first << "," << p.second << endl;
+		pair<double, string> p = g->predictNext(x, y, 0, 1);
+		nodePredicted = p.second;
+		probability = p.first;
+		//cout << "At " << toFormat(x, y) << " probability " << probability << " to " << nodePredicted << endl;
 	}
 	if (testFlag)
 		while(cin >> id >> x >> y)

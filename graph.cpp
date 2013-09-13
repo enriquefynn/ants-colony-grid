@@ -99,14 +99,18 @@ void Graph::dfs(unordered_map<string, bool> &visited, vector<Node<int >* > &node
 		nodes.push_back(graph[node].node);
 		return;
 	}
+	if (graph[node].empty())
+		return;
 	for (auto child : graph[node].conn)
+	{
 		dfs(visited, nodes, child->node->getID(), maxT, localT + child->node->getAvgWait());
+	}
 }
 
 pair<double, string> Graph::predictNext(int x, int y, double timeSpentHere, double maxT)
 {
 	string xy = toStringFormat(x, y);
-	vector<Node<int>* > probNodes;
+	vector<Node<int>* > probNodes = vector<Node<int>* >();
 	unordered_map<string, bool> visited = unordered_map<string, bool>();
 	dfs(visited, probNodes, xy, maxT, 0);
 	int i = 0;
@@ -124,6 +128,8 @@ pair<double, string> Graph::predictNext(int x, int y, double timeSpentHere, doub
 		}
 		++i;
 	}
+	if (!all)
+		return make_pair(0, "-1--1");
 	return make_pair(probNodes[best]->timesPassed/all, probNodes[best]->getID());
 }
 
@@ -138,11 +144,4 @@ void Graph::print(int trips)
 		cout << endl;
 	}
 }
-
-
-
-
-
-
-
 
