@@ -70,7 +70,7 @@ void Graph::insert(int x, int y, char direction, int tripN, int flags)
 				(graph[whereAmI].node)->leave();
 				graph[whereAmI].conn.insert(&graph[nodeStr]);
 				whereAmI = nodeStr;
-				(graph[whereAmI].node)->enter();
+				//(graph[whereAmI].node)->enter();
 			}
 		}
 	}

@@ -16,9 +16,6 @@
 #include <string>
 #include <unistd.h>
 #include "graph.hpp"
-#define nOfLines 75882909
-#define NGrid 20
-#define MAXMETRES 40000
 
 using namespace std;
 
@@ -59,13 +56,13 @@ int main(int argc, char* argv[])
 	string b;
 	int time, oldTime = 0;
 	getline(cin, b);
-	vector<pair<double, string> > *p;
+	vector<pair<double, string> > p;
 	while(cin >> xd >> yd >> b >> id >> time) {
 		x = xd*1000;
 		y = yd*1000;
 		if (time - oldTime < 80)
 		{
-			for (auto pprob : *p)
+			for (auto pprob : p)
 			{
 				if (pprob.second == toFormat(x, y))
 				{
@@ -95,7 +92,7 @@ int main(int argc, char* argv[])
 			}
 			oldId = id;
 		}
-		p = g->predictNext(x, y, 0, 1);
+		p = *g->predictNext(x, y, 0, 1);
 		//cout << "At " << toFormat(x, y) << " probability " << probability << " to " << nodePredicted << endl;
 		oldTime = time;
 	}

@@ -20,8 +20,8 @@ template <typename T>
 class Node
 {
 	string id;
-	T x;						/* X coord */
-	T y;						/* Y coord */
+	T x;			/* X coord */
+	T y;			/* Y coord */
 	double avgWait;	/* Average waiting time */
 	char direction;	/* Heading direction */
 	int localWait;	/* Local time waiting*/
@@ -33,6 +33,7 @@ class Node
 		id = out.str();
 	}
 	public:
+	int lTrip;		/* Last trip */
 	int timesPassed;/* Times I got in this node*/
 	inline Node(T x, T y, char direction) {this->x = x; this->y = y; setID(); this->direction = direction; avgWait = 0.; localWait = 1; timesPassed = 0;}
 	inline Node() {avgWait = 0.; localWait = 1; timesPassed = 0;}
@@ -45,8 +46,8 @@ class Node
 	inline void wait(){++localWait;}
 	
 	inline void leave(){avgWait = (avgWait*timesPassed + localWait)/++timesPassed; localWait = 1;}
-	inline void enter(){localWait = 1;}
-	
+	inline void enter(int nTrip){localWait = 1; lTrip = nTrip;}
+
 	inline T getX() {return x;}
 	inline T getY() {return y;}
 	inline string getID() {return id;}
