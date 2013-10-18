@@ -18,38 +18,25 @@
 
 using namespace std;
 
-Graph::Graph(int x, int y)
-{
-}
-
-string toStringFormat(int x, int y)
-{
-	string s;
-	stringstream out;
-	out << x << '-' << y;
-	return out.str();
-}
-
 /** Inserts a node in the graph
  * \param x X coordinate
  * \param y Y coordinate
  * \param tripN The Nth trip
  * \param flags The flags for inserting node
 */
-void Graph::insert(int x, int y, char direction, int tripN, int flags)
+void Graph::insert(SiteId<int> nodeId, int tripN, int flags)
 {
-	string nodeStr = toStringFormat(x, y);
 	//There isn't a key yet
-	if (!graph.count(nodeStr))
+	if (!graph.count(nodeId))
 	{
-		Anode a = Anode(x, y, direction);
-		graph[nodeStr] = a;
-		if (whereAmI != "")
+		Anode a = Anode(nodeId);
+		graph[nodeId] = a;
+		if (whereAmI.isValid())
 		{
-			graph[whereAmI].conn.insert(&graph[nodeStr]);
+			graph[whereAmI].conn.insert(&graph[nodeId]);
 			(graph[whereAmI].node)->leave();
 		}
-		whereAmI = nodeStr;
+		whereAmI = nodeId;
 	}
 	//There is a node with this key
 	else
@@ -58,19 +45,19 @@ void Graph::insert(int x, int y, char direction, int tripN, int flags)
 		if (flags & NEWTRIP)
 		{
 			(graph[whereAmI].node)->leave();
-			whereAmI = nodeStr;
+			whereAmI = nodeId;
 		}
 		else
 		{
 			//Are we waiting in the same node?
-			if (whereAmI == nodeStr)
-				(graph[nodeStr].node)->wait();
+			if (whereAmI == nodeId)
+				(graph[nodeId].node)->wait();
 			else
 			{
 				(graph[whereAmI].node)->leave();
-				graph[whereAmI].conn.insert(&graph[nodeStr]);
-				whereAmI = nodeStr;
-				//(graph[whereAmI].node)->enter();
+				graph[whereAmI].conn.insert(&graph[nodeId]);
+				whereAmI = nodeId;
+				(graph[whereAmI].node)->enter();
 			}
 		}
 	}
@@ -81,7 +68,7 @@ void Graph::insert(int x, int y, char direction, int tripN, int flags)
  * \param maxT Maximum forecast time
  * \param localT Local time (for recursion)
 */
-pair<double, string> Graph::predictNext(string node, double maxT, double localT)
+pair<double, SiteId<int> > Graph::predictNext(SiteId<int> node, double maxT, double localT)
 {
 	if (graph[node].empty())
 		return make_pair(1, node);
@@ -90,18 +77,17 @@ pair<double, string> Graph::predictNext(string node, double maxT, double localT)
 	double nTimes = 0;
 	for (auto child : graph[node].conn)
 		nTimes+= child->node->timesPassed;
-	vector<pair<double, string > > l;
+	vector<pair<double, SiteId<int> > > l;
 	for (auto child : graph[node].conn)
 	{
-		l.push_back(predictNext(child->node->getID(), 
-								maxT, localT + child->node->getAvgWait()));
+		l.push_back(predictNext(child->node->getID(), maxT, localT + child->node->getAvgWait()));
 		l.back().first*=(child->node->timesPassed)/nTimes;
 	}
 	sort(l.begin(), l.end());
 	return l[0];
 }
 
-void Graph::dfs(unordered_map<string, bool> &visited, vector<Node<int >* > &nodes, string node, double maxT, double localT)
+void Graph::dfs(unordered_map<SiteId<int>, bool, SiteIdHash<int>, SiteIdEqual<int> > &visited, vector<Node<SiteId<int> >* > &nodes, SiteId<int> node, double maxT, double localT)
 {
 	if (visited[node] == true)
 		return;
@@ -119,18 +105,18 @@ void Graph::dfs(unordered_map<string, bool> &visited, vector<Node<int >* > &node
 	}
 }
 
-vector<pair<double, string> > *Graph::predictNext(int x, int y, double timeSpentHere, double maxT)
+vector<pair<double, SiteId<int> > > *Graph::predictNexts(SiteId<int> xy, double timeSpentHere, double maxT)
 {
-	string xy = toStringFormat(x, y);
-	vector<Node<int>* > probNodes = vector<Node<int>* >();
-	unordered_map<string, bool> visited = unordered_map<string, bool>();
+	vector<Node<SiteId<int> >* > probNodes = vector<Node<SiteId<int> >* >();
+	unordered_map<SiteId<int>, bool, SiteIdHash<int>, SiteIdEqual<int> > visited = unordered_map<SiteId<int>, bool, SiteIdHash<int>, SiteIdEqual<int> >();
 	dfs(visited, probNodes, xy, maxT, 0);
-	vector<pair<double, string> > *probPairs = new vector<pair<double, string> >();
+	vector<pair<double, SiteId<int> > > *probPairs = new vector<pair<double, SiteId<int> > >();
 	double all = 0;
 	for (auto node : probNodes)
 		all+= node->timesPassed;
 	for (auto node : probNodes)
 		probPairs->push_back(make_pair(node->timesPassed/all, node->getID()));
+	sort(probPairs->begin(),probPairs->end());
 	return probPairs;
 }
 

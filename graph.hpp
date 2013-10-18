@@ -22,26 +22,31 @@ using namespace std;
 
 struct Anode
 {
-	Node<int> *node;
+	Node<SiteId<int> > *node;
 	unordered_set<const Anode *> conn;
-	Anode(int x, int y, char d)
+	Anode(SiteId<int> id)
 	{
-		node = new Node<int>(x, y, d);
+		node = new Node<SiteId<int> >(id);
 	}
+
+	~Anode()
+	{
+		//delete node;
+	}
+
 	Anode() {}
 	inline bool empty() {return conn.empty();}
 };
 
 class Graph
 {
-	unordered_map<string, Anode > graph;	/*The Graph*/
-	string whereAmI;
+	unordered_map<SiteId<int>, Anode, SiteIdHash<int>, SiteIdEqual<int> > graph;	/*The Graph*/
+	SiteId<int> whereAmI;
 public:
 	inline Graph(){}
-	Graph(int x, int y);
-	void insert(int x, int y, char direction, int tripN, int flags);
+	void insert(SiteId<int> id, int tripN, int flags);
 	void print(int trips);
-	vector<pair<double, string> > *predictNext(int x, int y, double timeSpentHere, double maxT);
-	void dfs(unordered_map<string, bool> &visited, vector<Node<int >* > &nodes, string node, double maxT, double localT);
-	pair<double, string> predictNext(string node, double maxT, double localT);
+	vector<pair<double, SiteId<int> > > *predictNexts(SiteId<int> id, double timeSpentHere, double maxT);
+	pair<double, SiteId<int> >          predictNext(SiteId<int> id, double maxT, double localT);
+	void dfs(unordered_map<SiteId<int>, bool, SiteIdHash<int>, SiteIdEqual<int> > &visited, vector<Node<SiteId<int> >* > &nodes, SiteId<int> node, double maxT, double localT);
 };

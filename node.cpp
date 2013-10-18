@@ -17,44 +17,54 @@
 using namespace std;
 
 template <typename T>
-class Node
+class SiteId
 {
-	string id;
-	T x;			/* X coord */
-	T y;			/* Y coord */
-	double avgWait;	/* Average waiting time */
+
+	T x;		/* X coord */
+	T y;		/* Y coord */
 	char direction;	/* Heading direction */
-	int localWait;	/* Local time waiting*/
-	inline void setID()
+	string myId = "";
+	bool valid;
+
+    public:
+    inline SiteId()
 	{
+        	valid = false;
+		stringstream out;
+		out << "invalid";
+		myId = out.str();
+	}
+
+	inline SiteId(T x, T y, char dir )
+	{
+        	valid = true;
+
+		this->x = x;
+		this->y = y;
+		this->direction = dir;
+
 		string s;
 		stringstream out;
-		out << x << '-' << y;
-		id = out.str();
+		out << x << ' ' << y << ' ' << dir;
+		myId = out.str();
 	}
-	public:
-	int lTrip;		/* Last trip */
-	int timesPassed;/* Times I got in this node*/
-	inline Node(T x, T y, char direction) {this->x = x; this->y = y; setID(); this->direction = direction; avgWait = 0.; localWait = 1; timesPassed = 0;}
-	inline Node() {avgWait = 0.; localWait = 1; timesPassed = 0;}
-	inline friend bool operator== (const Node<T> &lhs, const Node<T> &rhs){return ((lhs.direction == rhs.direction) && (lhs.x == rhs.x) && (lhs.y == rhs.y));}
-	inline friend bool operator!= (const Node<T> &lhs, const Node<T> &rhs) {return !(lhs == rhs);}
-	inline friend bool operator< (const Node<T> &lhs, const Node<T> &rhs){ return (lhs.x == rhs.x) ? (lhs.y < rhs.y): (lhs.x < rhs.x);}
-	inline friend ostream& operator<< (ostream &out, const Node<T> &node) {out << node.x << '-' << node.y; return out;}
-	
-	inline double getAvgWait() {return avgWait;}
-	inline void wait(){++localWait;}
-	
-	inline void leave(){avgWait = (avgWait*timesPassed + localWait)/++timesPassed; localWait = 1;}
-	inline void enter(int nTrip){localWait = 1; lTrip = nTrip;}
 
-	inline T getX() {return x;}
-	inline T getY() {return y;}
-	inline string getID() {return id;}
-	inline char getDirection(Node *n)
+   	inline bool isValid() const {return valid;}
+	inline T getX() const {return x;}
+	inline T getY() const {return y;}
+	inline char getDirection() const {return direction;}
+	inline string asStr() const {return myId;}
+
+	inline friend bool operator== (const SiteId<T> &lhs, const SiteId<T> &rhs){return ((lhs.direction == rhs.direction) && (lhs.x == rhs.x) && (lhs.y == rhs.y));}
+	inline friend bool operator!= (const SiteId<T> &lhs, const SiteId<T> &rhs) {return !(lhs == rhs);}
+	inline friend bool operator< (const SiteId<T> &lhs, const SiteId<T> &rhs){ return (lhs.x == rhs.x) ? (lhs.y < rhs.y): (lhs.x < rhs.x);}
+	inline friend ostream& operator<< (ostream &out, const SiteId<T> &id) {out << id.x << ' ' << id.y << ' ' << id.direction; return out;}
+
+	inline static char getDirection(T x, T y, T ox, T oy, int numDir)
 	{
-		int angle = atan2(this->y - n->y, this->x - n->x) * 180. / M_PI;
-		if ((angle >= 315) && (angle < 45))
+        //TODO: use 360/numDir to find out how many directions there are.
+		int angle = atan2(y - oy, ox - ox) * 180. / M_PI;
+		if ((angle >= 315) || (angle < 45))
 			return 'E';
 		if ((angle >= 45) && (angle < 135))
 			return 'N';
@@ -62,6 +72,49 @@ class Node
 			return 'W';
 		if ((angle >= 225) && (angle < 315))
 			return 'S';
+        return '?';
 	}
+};
+
+template <typename T>
+struct SiteIdHash: public std::unary_function<SiteId<T>, size_t> {
+        size_t operator()(const SiteId<T> &k) const{
+        size_t h1 = std::hash<T>()(k.getX());
+        size_t h2 = std::hash<T>()(k.getY());
+        size_t h3 = std::hash<char>()(k.getDirection());
+        return (h1 ^ (h2 << 1)) ^ h3;
+    }
+};
+
+template<typename T>
+struct SiteIdEqual : public std::unary_function<SiteId<T>, bool> {
+
+   bool operator()(const SiteId<T>& left, const SiteId<T>& right) const
+   {
+      return left == right;
+   }
+};
+
+
+template <typename T>
+class Node
+{
+	double avgWait = 0.;	/* Average waiting time */
+	int localWait = 1;	/* Local time waiting*/
+	T siteId;
+
+	public:
+	int timesPassed = 0;/* Times I got in this node*/
+	inline Node(T id) {this->siteId = id;}
+	inline Node()     {}
+	inline T getID() {return siteId;}
+
+	inline double getAvgWait() {return avgWait;}
+	inline void wait(){++localWait;}
+
+	inline void leave(){avgWait = (avgWait*timesPassed + localWait)/(timesPassed+1); timesPassed++; localWait = 1;}
+	inline void enter(){localWait = 1;}
+
+	inline friend ostream& operator<< (ostream &out, const Node<T> &node) {out << node.siteId; return out;}
 };
 

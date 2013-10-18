@@ -1,5 +1,5 @@
 CC=g++-4.7
-CCFLAGS=-O3 -std=c++0x -march=native
+CCFLAGS=-std=c++0x -march=native -Wall -g
 
 all: parser.o node.o graph.o
 	$(CC) $(CCFLAGS) node.o graph.o parser.o -o main
