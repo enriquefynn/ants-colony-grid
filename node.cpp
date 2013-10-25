@@ -15,7 +15,7 @@
 #include <cmath>
 
 //TODO: Implement a config to store variables
-const int sigma = 0.9
+const int sigma = 0.9;
 using namespace std;
 
 template <typename T>
