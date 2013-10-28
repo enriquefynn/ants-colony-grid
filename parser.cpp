@@ -29,8 +29,8 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	double MULTIPLIER = 1;// 0.3048/100.0 //.003048 (feet to meters) for seattle buses, 1000 for cabspotting, 100 for syntetic
-	double INTERVAL = 50;
-	double TIME_STEP = 2; //120 for seattle buses, 80 for cabspotting, 30000 for syntetic
+	double INTERVAL = 30;
+	double TIME_STEP = 3; //3 for seattle buses, 80 for cabspotting, 30000 for syntetic
 	int MAX_OPTIONS = 10000;
 	
 	char opt;

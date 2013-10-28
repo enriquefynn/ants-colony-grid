@@ -101,11 +101,12 @@ class Node
 {
 	double avgWait = 0.;	/* Average waiting time */
 	int localWait = 1;	/* Local time waiting*/
+	int lastTrip = 0;
 	T siteId;
 
 	public:
 	int timesPassed = 0;/* Times I got in this node*/
-	inline Node(T id) {this->siteId = id;}
+	inline Node(T id) {this->siteId = id; avgWait = 1; localWait = 1;}
 	inline Node()     {}
 	inline T getID() {return siteId;}
 
