@@ -14,6 +14,8 @@
 #include <sstream>
 #include <cmath>
 
+//TODO: Implement a config to store variables
+const double sigma = 0.9;
 using namespace std;
 
 template <typename T>
@@ -100,21 +102,31 @@ template <typename T>
 class Node
 {
 	double avgWait = 0.;	/* Average waiting time */
-	int localWait = 1;	/* Local time waiting*/
-	int lastTrip = 0;
+	int localWait = 1;		/* Local time waiting */
 	T siteId;
-
+	int lastTrip;			/* Last trip ID */
+	int deltaTrip;			/* Trip's difference */
 	public:
-	int timesPassed = 0;/* Times I got in this node*/
-	inline Node(T id) {this->siteId = id; avgWait = 1; localWait = 1;}
+	double timeCoef = sigma;	/* Times I got in this node*/
+	inline Node(T id, int tripID) {this->siteId = id; lastTrip = tripID;}
 	inline Node()     {}
 	inline T getID() {return siteId;}
 
 	inline double getAvgWait() {return avgWait;}
 	inline void wait(){++localWait;}
 
-	inline void leave(){avgWait = (avgWait*timesPassed + localWait)/(timesPassed+1); timesPassed++; localWait = 1;}
-	inline void enter(){localWait = 1;}
+	inline void leave()
+	{
+		avgWait = (1. - sigma)*avgWait + sigma*localWait; 
+		localWait = 1; 
+		timeCoef = timeCoef*pow(1. - sigma, deltaTrip) + sigma*timeCoef;
+	}
+	inline void enter(int tripID)
+	{
+		localWait = 1; 
+		deltaTrip = lastTrip - tripID; 
+		lastTrip = tripID;
+	}
 
 	inline friend ostream& operator<< (ostream &out, const Node<T> &node) {out << node.siteId; return out;}
 };

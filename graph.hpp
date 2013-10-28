@@ -24,9 +24,9 @@ struct Anode
 {
 	Node<SiteId<int> > *node;
 	unordered_set<const Anode *> conn;
-	Anode(SiteId<int> id)
+	Anode(SiteId<int> id, int tripID)
 	{
-		node = new Node<SiteId<int> >(id);
+		node = new Node<SiteId<int> >(id, tripID);
 	}
 
 	~Anode()

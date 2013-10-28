@@ -29,7 +29,7 @@ void Graph::insert(SiteId<int> nodeId, int tripN, int flags)
 	//There isn't a key yet
 	if (!graph.count(nodeId))
 	{
-		Anode a = Anode(nodeId);
+		Anode a = Anode(nodeId, tripN);
 		graph[nodeId] = a;
 		if (whereAmI.isValid())
 		{
@@ -57,7 +57,7 @@ void Graph::insert(SiteId<int> nodeId, int tripN, int flags)
 				(graph[whereAmI].node)->leave();
 				graph[whereAmI].conn.insert(&graph[nodeId]);
 				whereAmI = nodeId;
-				(graph[whereAmI].node)->enter();
+				(graph[whereAmI].node)->enter(tripN);
 			}
 		}
 	}
@@ -76,12 +76,12 @@ pair<double, SiteId<int> > Graph::predictNext(SiteId<int> node, double maxT, dou
 		return make_pair(0, node);
 	double nTimes = 0;
 	for (auto child : graph[node].conn)
-		nTimes+= child->node->timesPassed;
+		nTimes+= child->node->timeCoef;
 	vector<pair<double, SiteId<int> > > l;
 	for (auto child : graph[node].conn)
 	{
 		l.push_back(predictNext(child->node->getID(), maxT, localT + child->node->getAvgWait()));
-		l.back().first*=(child->node->timesPassed)/nTimes;
+		l.back().first*=(child->node->timeCoef)/nTimes;
 	}
 	sort(l.begin(), l.end());
 	return l[0];
@@ -113,9 +113,9 @@ vector<pair<double, SiteId<int> > > *Graph::predictNexts(SiteId<int> xy, double 
 	vector<pair<double, SiteId<int> > > *probPairs = new vector<pair<double, SiteId<int> > >();
 	double all = 0;
 	for (auto node : probNodes)
-		all+= node->timesPassed;
+		all+= node->timeCoef;
 	for (auto node : probNodes)
-		probPairs->push_back(make_pair(node->timesPassed/all, node->getID()));
+		probPairs->push_back(make_pair(node->timeCoef/all, node->getID()));
 	sort(probPairs->begin(),probPairs->end());
 	return probPairs;
 }
