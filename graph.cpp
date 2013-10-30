@@ -105,7 +105,7 @@ void Graph::dfs(unordered_map<SiteId<int>, bool, SiteIdHash<int>, SiteIdEqual<in
 	}
 }
 
-vector<pair<double, SiteId<int> > > *Graph::predictNexts(SiteId<int> xy, double timeSpentHere, double maxT)
+vector<pair<double, SiteId<int> > > *Graph::predictNexts(SiteId<int> xy, double timeSpentHere, double maxT, int tripID)
 {
 	vector<Node<SiteId<int> >* > probNodes = vector<Node<SiteId<int> >* >();
 	unordered_map<SiteId<int>, bool, SiteIdHash<int>, SiteIdEqual<int> > visited = unordered_map<SiteId<int>, bool, SiteIdHash<int>, SiteIdEqual<int> >();
@@ -113,7 +113,10 @@ vector<pair<double, SiteId<int> > > *Graph::predictNexts(SiteId<int> xy, double 
 	vector<pair<double, SiteId<int> > > *probPairs = new vector<pair<double, SiteId<int> > >();
 	double all = 0;
 	for (auto node : probNodes)
+	{
+		node->visit(tripID);
 		all+= node->timeCoef;
+	}
 	for (auto node : probNodes)
 		probPairs->push_back(make_pair(node->timeCoef/all, node->getID()));
 	sort(probPairs->begin(),probPairs->end());

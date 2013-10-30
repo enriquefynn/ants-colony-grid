@@ -75,15 +75,16 @@ int main(int argc, char* argv[])
 	int meas;
     	SiteId<int> siteId, oldSiteId = SiteId<int>();
 
-	int tripId, oldTripId = 0; //Current and previous ID
+	int tripId = -1, oldTripId = -1; //Current and previous ID
 	char d;
 
 	Graph *g = new Graph();
 
 	int line = 0;
 	int trips = 0;
-	bool newTrip = false, oldNewTrip = false;
-	bool bigGap = false, oldBigGap = false;
+	bool newTrip = false;
+	bool bigGap = false;
+	int skipped = 0;
 
 	string b;
 	int time, oldTime = 0;
@@ -103,37 +104,44 @@ int main(int argc, char* argv[])
 		d = SiteId<int>::getDirection(x,y,oldX,oldY,4);
 
 		siteId = SiteId<int>(x,y,d);
-		newTrip = false;
-		bigGap = false;
 
-		if(tripId != oldTripId)
+		newTrip = tripId != oldTripId;
+		if(newTrip)
 		{
-			newTrip = true;
 			trips++;
 		}
-		if (!newTrip && time - oldTime > INTERVAL * TIME_STEP)
-		{
-			bigGap = true;
-		}
 
+		bigGap = time - oldTime > INTERVAL * TIME_STEP;
 
 		//forecast
-		if(trips!= 1)
+		if(newTrip || bigGap) //gotta skip some lines
 		{
-			if(newTrip && !oldNewTrip)//start a new series in gnuplot file
+			if(newTrip && skipped == 0 &&(trips != 1))//just print something
 			{
-				if(oldBigGap)	cout << endl; //there is one empty line already
-				else cout << endl << endl;    //thre is no empty line
+				cout << endl << endl;
+				skipped = 2;
 			}
-
-			if(bigGap && !oldBigGap )//skip one entry
+			else if(newTrip && skipped == 1)//just skipped ONE line
 			{
-				if(!newTrip) cout << endl; //but only if this is not a new trip
+				cout << endl;
+				skipped = 2;
+			}
+			else if(newTrip && skipped == 2)//just skipped TWO lines
+			{
+				//Seems like we got a whole empty series
+				cout << "?" << endl << endl << endl;
+				skipped = 2;
+			}
+			else if(bigGap && skipped == 0)
+			{
+				cout << endl;
+				skipped = 1;
 			}
 		}
-
-		if (!newTrip && !bigGap)
+		else //(!newTrip && !bigGap) //gotta print something
 		{
+			skipped = 0; //remember the 
+
 			double probability = 0;
 			SiteId<int> nodePredicted = SiteId<int>();
 
@@ -190,11 +198,9 @@ int main(int argc, char* argv[])
 		}
 
 		delete p;
-		p = g->predictNexts(siteId, 0, 1);
+		p = g->predictNexts(siteId, 0, 1, tripId);
 		oldTripId = tripId;
 		oldTime = time;
-		oldNewTrip = newTrip;
-		oldBigGap = bigGap;
 		oldX = x;
 		oldY = y;
 		oldSiteId = siteId;

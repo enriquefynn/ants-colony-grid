@@ -15,7 +15,7 @@
 #include <cmath>
 
 //TODO: Implement a config to store variables
-const double sigma = 0.9;
+const double sigma = 0.4;
 using namespace std;
 
 template <typename T>
@@ -105,9 +105,8 @@ class Node
 	int localWait = 1;		/* Local time waiting */
 	T siteId;
 	int lastTrip;			/* Last trip ID */
-	int deltaTrip;			/* Trip's difference */
 	public:
-	double timeCoef = sigma;	/* Times I got in this node*/
+	double timeCoef = 1;/* Times I got in this node*/
 	inline Node(T id, int tripID) {this->siteId = id; lastTrip = tripID;}
 	inline Node()     {}
 	inline T getID() {return siteId;}
@@ -119,15 +118,22 @@ class Node
 	{
 		avgWait = (1. - sigma)*avgWait + sigma*localWait; 
 		localWait = 1; 
-		timeCoef = timeCoef*pow(1. - sigma, deltaTrip) + sigma*timeCoef;
-	}
-	inline void enter(int tripID)
-	{
-		localWait = 1; 
-		deltaTrip = lastTrip - tripID; 
-		lastTrip = tripID;
 	}
 
+	inline void enter(int tripID)
+	{
+		int deltaTrip = tripID - lastTrip;
+		localWait = 1; 
+		timeCoef = timeCoef*pow(1. - sigma, deltaTrip) + sigma;
+		lastTrip = tripID;
+	}
+	
+	/* Only look to timeCoef */
+	inline void visit(int tripID)
+	{
+		timeCoef = timeCoef*pow(1. - sigma, tripID - lastTrip);
+		lastTrip = tripID;
+	}
 	inline friend ostream& operator<< (ostream &out, const Node<T> &node) {out << node.siteId; return out;}
 };
 

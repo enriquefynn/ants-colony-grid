@@ -46,7 +46,7 @@ public:
 	inline Graph(){}
 	void insert(SiteId<int> id, int tripN, int flags);
 	void print(int trips);
-	vector<pair<double, SiteId<int> > > *predictNexts(SiteId<int> id, double timeSpentHere, double maxT);
+	vector<pair<double, SiteId<int> > > *predictNexts(SiteId<int> id, double timeSpentHere, double maxT, int tripID);
 	pair<double, SiteId<int> >          predictNext(SiteId<int> id, double maxT, double localT);
 	void dfs(unordered_map<SiteId<int>, bool, SiteIdHash<int>, SiteIdEqual<int> > &visited, vector<Node<SiteId<int> >* > &nodes, SiteId<int> node, double maxT, double localT);
 };

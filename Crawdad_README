@@ -78,8 +78,7 @@ plot  './route_007' u 0:(delta($1,$2,$5)) w l
 
 
 
-
-plot de variação no X, com predição e erro
+#Para os próximos dois plots
 set y2range[-10:200] 
 set ytics nomirror  
 set y2tics 10 
@@ -88,7 +87,8 @@ set ylabel "300 feet segments"
 set xlabel "Measurements"  
 set y2range[-10:100] 
 
+plot de variação no X, com predição e erro
 plot './route_007' i 90:100 u 6:(floor($1/300)) w l t "Real", './prob_300foot_t100_d_3opt/route_007' i 90:100 u 14:($1!=0?$6:($2!=0?$9:NaN)) w p t "Predicted", '' i 90:100 u 14:($1!=0?0:($2!=0?$9-$6:NaN)) w l t "Error" axes x1y2
 
-plot de variação no X, com predição e erro
+plot de variação no Y, com predição e erro
 plot './route_007' i 90:100 u 6:(floor($2/300)) w l t "Real", './prob_300foot_t100_d_3opt/route_007' i 90:100 u 14:($1!=0?$7:($2!=0?$10:NaN)) w p t "Predicted", '' i 90:100 u 14:($1!=0?0:($2!=0?$10-$7:NaN)) w l t "Error" axes x1y2
