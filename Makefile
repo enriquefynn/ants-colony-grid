@@ -1,4 +1,4 @@
-CC=g++-4.7
+CC=g++
 CCFLAGS=-std=c++0x -march=native -Wall -g
 
 all: parser.o node.o graph.o

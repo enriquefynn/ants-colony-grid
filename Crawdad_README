@@ -92,3 +92,18 @@ plot './route_007' i 90:100 u 6:(floor($1/300)) w l t "Real", './prob_300foot_t1
 
 plot de variação no Y, com predição e erro
 plot './route_007' i 90:100 u 6:(floor($2/300)) w l t "Real", './prob_300foot_t100_d_3opt/route_007' i 90:100 u 14:($1!=0?$7:($2!=0?$10:NaN)) w p t "Predicted", '' i 90:100 u 14:($1!=0?0:($2!=0?$10-$7:NaN)) w l t "Error" axes x1y2
+
+
+
+#processa arquivo de rotas
+#-m 3 -> k = 3
+#-i 30 -> unidade de tempo = 30
+#-I 3 -> m = 3
+#-r 0.001 -> g = 1000 (1/1000 == 0.001)
+main -m 3 -i 30 -I 3 -r 0.001 < t5/route_007 > prob_1000foot_t90_d_3opt_s04/t5/route_007
+
+#gera statisticas
+gawk -f ../stat.awk < t5/route_007 >stat/t5/route_007 
+
+
+
