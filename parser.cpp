@@ -1,15 +1,3 @@
-/*
- * ----------------------------------------------------------------------------
- * This software is in the BESOURO BEER-WARE LICENSE and I opted to keep it
- * as a free software, and as so, anyone who find this software useful shall
- * pay me (Enrique Fynn) <fynn@fr4c74l.com> a beer.
- * The license for this software comes in the same directory you found it
- * as LICENSE
- *
- * I prefer Weiss, IPA, or any strong brown ale. But just any beer will do.
- * ----------------------------------------------------------------------------
- */
-
 #include <fstream>
 #include <sstream>
 #include <iostream>
